@@ -5,8 +5,7 @@ open Steclo.Order.Png
 
 type _CliOpts =
     {
-        From : list<int>
-        To : list<int>
+        Group : list<int>
         Dir : string
         Mode : CodecMode
     }
@@ -18,13 +17,10 @@ let ParseOrder (str : string) = seq { for s in str.Split ',' -> s.Trim () |> int
 let ParseCliOpts args =
     let usage () = "[Usage]\n  %p %o"
     let appName = "png-dir"
-    let defs = { From=[]; To=[]; Dir=""; Mode=Encode }
+    let defs = { Group=[]; Dir=""; Mode=Encode }
     let spec = [
-        Option (descr="From order",
-                callback=(fun o a -> {o with From=ParseOrder a.[0]}:_CliOpts),
-                extra=1, short="-f", long="--from-order");
-        Option (descr="To order",
-                callback=(fun o a -> {o with To=ParseOrder a.[0]}:_CliOpts),
+        Option (descr="Group (selector)",
+                callback=(fun o a -> {o with Group=ParseOrder a.[0]}:_CliOpts),
                 extra=1, short="-t", long="--to-order");
         Option (descr="Folder",
                 callback=(fun o a -> {o with Dir=a.[0]}:_CliOpts),
@@ -39,7 +35,7 @@ let ParseCliOpts args =
     try
         let (_, opts) = optParse spec usage appName args defs
         match opts.Mode with
-        | Encode -> OutOpts { From=opts.From; To=opts.To; Dir=opts.Dir }
+        | Encode -> OutOpts { Group=opts.Group; Dir=opts.Dir }
         | Decode -> InOpts { Dir=opts.Dir }
     with
         | SpecErr err -> eprintfn "Invalid spec: %s" err; exit 1
@@ -50,11 +46,15 @@ let ParseCliOpts args =
 ///////////////////////////////////////////////////////////////////////////////
 [<EntryPoint>]
 let main argv = 
+    let saved = Functions.WriteMeta (@"d:\prj\fsharp\Steclo\xxx.png", 1, 10, "12abcdef")
+    printfn "saved = %A" saved
+    let meta = Functions.ReadMeta (@"d:\prj\fsharp\Steclo\xxx.png")
+    printfn "meta = %A" meta
     let cliOpts = ParseCliOpts argv
     match cliOpts with
     | InOpts _ -> printf "Not supported yet!"; 1
     | OutOpts oo ->
         // FIXME for test
         let o = new OutputOrder (oo)
-        printfn "%s ; %A" o.Id o.opts.From
+        printfn "%s ; %A" o.Id o.opts.Group
         0 // return an integer exit code

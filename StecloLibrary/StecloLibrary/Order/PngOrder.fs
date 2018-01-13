@@ -4,11 +4,11 @@ open System.IO
 open System.Text
 open System.Security.Cryptography
 open Steclo.Codec.Png
+open System.Windows.Media.Imaging
 
 type OutOrderOpts =
     {
-        From : list<int>
-        To : list<int>
+        Group : list<int>
         Dir : string
     }
 
@@ -37,7 +37,32 @@ type OutputOrder =
 
     end
 
-//module Funcs =
-//    begin
-//        let DefaultOpts = OutOpts { From=[]; To=[]; Dir="" }
-//    end
+module Functions =
+    begin
+        let MetaKey = "/tEXt/Description"
+        let WriteMeta (path : string, num : int, from : int, hash : string) =
+            let data = sprintf "%d %d %s" num from hash
+            use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
+            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.None, BitmapCacheOption.Default)
+            let frm = dec.Frames.[0]
+            let wr = frm.CreateInPlaceBitmapMetadataWriter ()
+            let mutable res = false
+            if wr.TrySave () then
+                wr.SetQuery (MetaKey, data) // Steclo collection
+                res <- true
+            stm.Close ()
+            res
+
+        let ReadMeta (path : string) =
+            use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
+            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.None, BitmapCacheOption.Default)
+            let met = dec.Frames.[0].Metadata :?> BitmapMetadata
+            let data = met.GetQuery (MetaKey)
+            let res =
+                match data with
+                | null -> None
+                | obj -> Some <| obj.ToString ()
+            stm.Close ()
+            res
+
+    end

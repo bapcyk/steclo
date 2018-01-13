@@ -2,3 +2,5 @@ packages
 obj/
 dat/
 bin/
+out/
+.tmp

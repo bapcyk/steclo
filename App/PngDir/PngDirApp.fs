@@ -30,10 +30,10 @@ let ParseCliOpts args =
                 callback=(fun o a -> {o with Dir=a.[0]}:_CliOpts),
                 required=true, extra=1, short="-i", long="--input-folder");
         Option (descr="Encode Mode",
-                callback=(fun o a -> {o with Mode=Encode}:_CliOpts),
+                callback=(fun o _ -> {o with Mode=Encode}:_CliOpts),
                 short="-E", long="--encode")
         Option (descr="Decode Mode",
-                callback=(fun o a -> {o with Mode=Decode}:_CliOpts),
+                callback=(fun o _ -> {o with Mode=Decode}:_CliOpts),
                 short="-D", long="--decode")
     ]
     try
@@ -51,5 +51,10 @@ let ParseCliOpts args =
 [<EntryPoint>]
 let main argv = 
     let cliOpts = ParseCliOpts argv
-    printfn "%A" cliOpts
-    0 // return an integer exit code
+    match cliOpts with
+    | InOpts _ -> printf "Not supported yet!"; 1
+    | OutOpts oo ->
+        // FIXME for test
+        let o = new OutputOrder (oo)
+        printfn "%s ; %A" o.Id o.opts.From
+        0 // return an integer exit code

@@ -18,10 +18,10 @@ let ParseCliOpts args =
                 callback=(fun o a -> {o with OutDir=a.[0]}),
                 extra=1, short="-o", long="--out-dir")
         Option (descr="Encode Mode",
-                callback=(fun o a -> {o with Mode=Encode}),
+                callback=(fun o _ -> {o with Mode=Encode}),
                 short="-E", long="--encode")
         Option (descr="Decode Mode",
-                callback=(fun o a -> {o with Mode=Decode}),
+                callback=(fun o _ -> {o with Mode=Decode}),
                 short="-D", long="--decode")
     ]
     try

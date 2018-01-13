@@ -17,7 +17,7 @@ type InOrderOpts =
         Dir : string
     }
 
-type Output =
+type OutputOrder =
     class
         val opts : OutOrderOpts
         val Id : string

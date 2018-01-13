@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Png", "App\Png\Png\Png.fsproj", "{F791E94C-6FE8-463B-9486-ADC8AC72189F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D} = {A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "StecloLibrary", "StecloLibrary\StecloLibrary\StecloLibrary.fsproj", "{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PngDir", "App\PngDir\PngDir.fsproj", "{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F791E94C-6FE8-463B-9486-ADC8AC72189F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F791E94C-6FE8-463B-9486-ADC8AC72189F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F791E94C-6FE8-463B-9486-ADC8AC72189F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F791E94C-6FE8-463B-9486-ADC8AC72189F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B6899EC-76D3-4C28-B411-047A059DEC3D}
+	EndGlobalSection
+EndGlobal

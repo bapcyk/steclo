@@ -43,12 +43,12 @@ module Functions =
         let WriteMeta (path : string, num : int, from : int, hash : string) =
             let data = sprintf "%d %d %s" num from hash
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
-            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.None, BitmapCacheOption.Default)
+            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default)
             let frm = dec.Frames.[0]
             let wr = frm.CreateInPlaceBitmapMetadataWriter ()
             let mutable res = false
             if wr.TrySave () then
-                wr.SetQuery (MetaKey, data) // Steclo collection
+                wr.SetQuery (MetaKey, data.ToCharArray()) // Steclo collection
                 res <- true
             stm.Close ()
             res

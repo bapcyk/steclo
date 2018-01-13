@@ -46,9 +46,10 @@ let ParseCliOpts args =
 ///////////////////////////////////////////////////////////////////////////////
 [<EntryPoint>]
 let main argv = 
-    let saved = Functions.WriteMeta (@"d:\prj\fsharp\Steclo\xxx.png", 1, 10, "12abcdef")
+    let f = @"d:\prj\fsharp\Steclo\dat\x.png"
+    let saved = Functions.WriteMeta (f, 1, 10, "12abcdef")
     printfn "saved = %A" saved
-    let meta = Functions.ReadMeta (@"d:\prj\fsharp\Steclo\xxx.png")
+    let meta = Functions.ReadMeta (f)
     printfn "meta = %A" meta
     let cliOpts = ParseCliOpts argv
     match cliOpts with

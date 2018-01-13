@@ -35,17 +35,17 @@ let ParseCliOpts args =
 
 [<EntryPoint>]
 let main argv =
-    //let ooo = {From = [2;1]; To = [1;2]; Dir = @"d:\prj\fsharp\ql"}
-    //let o = new Output (ooo)
     let _, cliOpts = ParseCliOpts argv
     try
         match cliOpts.Mode with
             | Encode -> 
                 let enc = new Encoder (cliOpts)
                 enc.Encode ()
+                0
             | Decode ->
                 let dec = new Decoder (cliOpts)
                 dec.Decode ()
+                0
     with
         | :? EOF -> eprintf "End of data!"; 1
         | _ as x -> eprintf "Error: %A" x; 1

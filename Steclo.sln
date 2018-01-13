@@ -11,6 +11,9 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "StecloLibrary", "StecloLibrary\StecloLibrary\StecloLibrary.fsproj", "{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PngDir", "App\PngDir\PngDir.fsproj", "{C0C796B9-4190-4AD6-A6FE-BC40F6BDD4D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D} = {A8F288E9-5E86-4EA8-BA6F-45EA5AAA3E0D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

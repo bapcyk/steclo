@@ -70,6 +70,9 @@
     <Reference Include="OptParse">
       <HintPath>..\..\packages\OptParse.0.4.5\lib\net45\OptParse.dll</HintPath>
     </Reference>
+    <Reference Include="StecloLibrary">
+      <HintPath>..\..\StecloLibrary\StecloLibrary\bin\Debug\StecloLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />

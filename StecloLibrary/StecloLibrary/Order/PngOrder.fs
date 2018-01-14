@@ -40,10 +40,10 @@ type OutputOrder =
 module Functions =
     begin
         let MetaKey = "/tEXt/Description"
-        let WriteMeta (path : string, num : int, from : int, hash : string) =
+        let WriteMeta_ (path : string, num : int, from : int, hash : string) =
             let data = sprintf "%d %d %s" num from hash
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
-            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default)
+            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None)
             let frm = dec.Frames.[0]
             let wr = frm.CreateInPlaceBitmapMetadataWriter ()
             let mutable res = false
@@ -53,16 +53,40 @@ module Functions =
             stm.Close ()
             res
 
+        let WriteMeta (path : string, num : int, from : int, hash : string) =
+            let fip = new FileInfo (path)
+            let data = sprintf "%d %d %s" num from hash
+            use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
+            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
+            let frm = dec.Frames.[0]
+            let _met = frm.Metadata
+            if _met = null then
+                stm.Close ()
+                false
+            else
+                let met = _met.Clone () :?> BitmapMetadata
+                stm.Close ()
+                fip.Delete ()
+                met.SetQuery (MetaKey, data)
+                let enc = new PngBitmapEncoder ()
+                enc.Frames.Add (BitmapFrame.Create (frm, frm.Thumbnail, met, frm.ColorContexts))
+                use stm' = File.Open (path, FileMode.Create, FileAccess.ReadWrite)
+                enc.Save (stm')
+                stm'.Close ()
+                true
+
         let ReadMeta (path : string) =
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
             let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.None, BitmapCacheOption.Default)
             let met = dec.Frames.[0].Metadata :?> BitmapMetadata
-            let data = met.GetQuery (MetaKey)
-            let res =
-                match data with
-                | null -> None
-                | obj -> Some <| obj.ToString ()
-            stm.Close ()
-            res
+            if met = null then None
+            else
+                let data = met.GetQuery (MetaKey)
+                let res =
+                    match data with
+                    | null -> None
+                    | obj -> Some <| obj.ToString ()
+                stm.Close ()
+                res
 
     end

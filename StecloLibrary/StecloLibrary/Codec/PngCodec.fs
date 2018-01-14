@@ -32,6 +32,7 @@ type WRBitmap =
         new (sizeLikeFile : string) =
             let img : Image = Image.FromFile (sizeLikeFile)
             new WRBitmap (img.Width, img.Height)
+            then img.Dispose ()
             
         new (width : int, height : int) =
             let bits = Array.zeroCreate (width * height)
@@ -93,24 +94,6 @@ type Encoder =
                 let path = Path.Combine (__.opts.OutDir, name + ".png")
                 Directory.CreateDirectory (__.opts.OutDir) |> ignore
                 path
-
-        //member __.Encode () =
-        //    let inStream = Console.OpenStandardInput ()
-        //    let outStream = Console.OpenStandardOutput ()
-        //    let mutable b : int = 0
-        //    use inImg = new Bitmap (__.opts.InputImg)
-        //    for y = 0 to __.Img.Height - 1 do // TODO make parallel
-        //        for x = 0 to __.Img.Width  - 1 do
-        //            b <- inStream.ReadByte () // TODO check -1, gen random after it
-        //            let c = inImg.GetPixel (x, y)
-        //            let c' = __.EncodeByte c (byte b) // truncate int to byte
-        //            __.Img.SetPixel (x, y, c')
-        //    __.Img.Save (__.OutImgPath)
-        //    if b <> -1 then
-        //        while (b <- inStream.ReadByte (); b) <> -1 do
-        //            outStream.WriteByte (byte b)
-        //    inImg.Dispose ()
-        //    0
 
         member __.Encode () =
             let inStream = Console.OpenStandardInput ()

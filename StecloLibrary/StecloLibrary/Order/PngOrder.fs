@@ -39,7 +39,7 @@ type OutputOrder =
 
 module Functions =
     begin
-        let MetaKey = "/tEXt/Description"
+        let MetaKey = "/tEXt/Scc"
         let WriteMeta_ (path : string, num : int, from : int, hash : string) =
             let data = sprintf "%d %d %s" num from hash
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)

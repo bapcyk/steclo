@@ -7,14 +7,14 @@ open Steclo.Codec.Png
 
 
 let ParseCliOpts args =
-    let usage () = "[Usage]\n  %p %o"
+    let usage () = "Syntax:\n  %p %o"
     let appName = "png-codec"
     let defs = { InputImg=""; OutDir=""; Mode=Encode }
     let spec = [
         Option (descr="Input image",
                 callback=(fun o a -> {o with InputImg=a.[0]}),
                 required=true, extra=1, short="-i", long="--input-image");
-        Option (descr="Output folder",
+        Option (descr="Output directory",
                 callback=(fun o a -> {o with OutDir=a.[0]}),
                 extra=1, short="-o", long="--out-dir")
         Option (descr="Encode Mode",

@@ -1,6 +1,7 @@
 ﻿namespace Steclo.Order.Png
 
 open System.IO
+open System
 open System.Text
 open System.Security.Cryptography
 open Steclo.Codec.Png
@@ -14,6 +15,7 @@ type OutOrderOpts =
     {
         Group : list<int>
         Dir : string
+        DirLim : int
     }
 
 type InOrderOpts =
@@ -25,10 +27,11 @@ type OutputOrder =
     class
         val opts : OutOrderOpts
         val Id : string
+        val ImgFiles : list<string>
 
         new (opts : OutOrderOpts) =
             let di = new DirectoryInfo (opts.Dir)
-            let files = seq { for f in di.GetFiles () -> f.Name }
+            let files = List.take opts.DirLim <| [for f in di.GetFiles () -> f.Name]
             let filesStr = String.concat "|" files
             let md5 = MD5.Create ()
             let hashBytes = md5.ComputeHash (Encoding.UTF8.GetBytes filesStr)
@@ -36,8 +39,29 @@ type OutputOrder =
             {
                 opts = opts
                 Id = id
+                ImgFiles = files
             }
             then md5.Dispose ()
+        
+        member __.Task (inStream : Stream) (file : string) =
+            fun () ->
+                let codecOpts = { InputImg=file; OutDir=__.opts.Dir; Mode=Encode }
+                let enc = new Encoder (codecOpts)
+                enc.Encode (inStream)
+
+        member __.Encode (inStream : Stream) =
+            for f in __.ImgFiles do
+                __.Task inStream f ()
+        
+        member __.Encode () =
+            let inStream = Console.OpenStandardInput ()
+            let outStream = Console.OpenStandardOutput ()
+            __.Encode (inStream)
+            let mutable b : int = 0
+            while (b <- inStream.ReadByte (); b) <> -1 do
+                outStream.WriteByte (byte b)
+            inStream.Close ()
+            outStream.Close ()
 
     end
 

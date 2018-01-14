@@ -8,6 +8,7 @@ type _CliOpts =
     {
         Group : list<int>
         Dir : string
+        DirLim : int
         Mode : CodecMode
     }
 
@@ -16,16 +17,19 @@ type CliOpts = | InOpts of InOrderOpts | OutOpts of OutOrderOpts
 let ParseOrder (str : string) = seq { for s in str.Split ',' -> s.Trim () |> int } |> Seq.toList
 
 let ParseCliOpts args =
-    let usage () = "[Usage]\n  %p %o"
+    let usage () = "Syntax:\n  %p %o"
     let appName = "png-dir"
-    let defs = { Group=[]; Dir=""; Mode=Encode }
+    let defs = { Group=[]; Dir=""; DirLim=100; Mode=Encode }
     let spec = [
         Option (descr="Group (selector)",
                 callback=(fun o a -> {o with Group=ParseOrder a.[0]}:_CliOpts),
                 extra=1, short="-t", long="--to-order");
-        Option (descr="Folder",
+        Option (descr="Directory",
                 callback=(fun o a -> {o with Dir=a.[0]}:_CliOpts),
-                required=true, extra=1, short="-i", long="--input-folder");
+                required=true, extra=1, short="-i", long="--input-dir");
+        Option (descr="Directory size limit",
+                callback=(fun o a -> {o with DirLim=int a.[0]}:_CliOpts),
+                extra=1, short="-l", long="--dir-lim");
         Option (descr="Encode Mode",
                 callback=(fun o _ -> {o with Mode=Encode}:_CliOpts),
                 short="-E", long="--encode")
@@ -36,7 +40,7 @@ let ParseCliOpts args =
     try
         let (_, opts) = optParse spec usage appName args defs
         match opts.Mode with
-        | Encode -> OutOpts { Group=opts.Group; Dir=opts.Dir }
+        | Encode -> OutOpts { Group=opts.Group; Dir=opts.Dir; DirLim=opts.DirLim }
         | Decode -> InOpts { Dir=opts.Dir }
     with
         | SpecErr err -> eprintfn "Invalid spec: %s" err; exit 1
@@ -46,7 +50,7 @@ let ParseCliOpts args =
 
 ///////////////////////////////////////////////////////////////////////////////
 [<EntryPoint>]
-let main argv = 
+let main argv =
     let f = @"d:\prj\fsharp\Steclo\dat\x.png"
     let v = {Num=1; From=15; Hash=Functions.UnsafeParseHash "aabbcc"}
     let saved = Functions.WriteMeta (f, v)

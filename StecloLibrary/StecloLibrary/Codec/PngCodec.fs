@@ -95,6 +95,18 @@ type Encoder =
                 Directory.CreateDirectory (__.opts.OutDir) |> ignore
                 path
 
+        member __.Encode (inStream : Stream) =
+            let mutable b : int = 0
+            use inImg = new Bitmap (__.opts.InputImg)
+            for y = 0 to __.Img.Height - 1 do
+                for x = 0 to __.Img.Width  - 1 do
+                    b <- inStream.ReadByte () // TODO check -1, gen random after it
+                    let c = inImg.GetPixel (x, y)
+                    let c' = __.EncodeByte c (byte b) // truncate int to byte
+                    __.Img.SetPixel (x, y, c')
+            __.Img.Save (__.OutImgPath)
+            inImg.Dispose ()
+
         member __.Encode () =
             let inStream = Console.OpenStandardInput ()
             let outStream = Console.OpenStandardOutput ()
@@ -104,18 +116,6 @@ type Encoder =
                 outStream.WriteByte (byte b)
             inStream.Close ()
             outStream.Close ()
-
-        member __.Encode (inStream : Stream) =
-            let mutable b : int = 0
-            use inImg = new Bitmap (__.opts.InputImg)
-            for y = 0 to __.Img.Height - 1 do // TODO make parallel
-                for x = 0 to __.Img.Width  - 1 do
-                    b <- inStream.ReadByte () // TODO check -1, gen random after it
-                    let c = inImg.GetPixel (x, y)
-                    let c' = __.EncodeByte c (byte b) // truncate int to byte
-                    __.Img.SetPixel (x, y, c')
-            __.Img.Save (__.OutImgPath)
-            inImg.Dispose ()
 
     end
 

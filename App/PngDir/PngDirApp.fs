@@ -1,6 +1,7 @@
 ﻿open OptParse
 open Steclo.Codec.Png
 open Steclo.Order.Png
+open Steclo.Common
 
 
 type _CliOpts =
@@ -47,7 +48,8 @@ let ParseCliOpts args =
 [<EntryPoint>]
 let main argv = 
     let f = @"d:\prj\fsharp\Steclo\dat\x.png"
-    let saved = Functions.WriteMeta (f, 1, 10, "12abcdef")
+    let v = {Num=1; From=15; Hash=Functions.UnsafeParseHash "aabbcc"}
+    let saved = Functions.WriteMeta (f, v)
     printfn "saved = %A" saved
     let meta = Functions.ReadMeta (f)
     printfn "meta = %A" meta

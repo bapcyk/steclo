@@ -4,7 +4,11 @@ open System.IO
 open System.Text
 open System.Security.Cryptography
 open Steclo.Codec.Png
+open Steclo.Common
 open System.Windows.Media.Imaging
+
+
+exception CorruptedMetaData
 
 type OutOrderOpts =
     {
@@ -37,25 +41,20 @@ type OutputOrder =
 
     end
 
+type MetaValue =
+    {
+        Num : int
+        From : int
+        Hash : HashString
+    }
+
 module Functions =
     begin
-        let MetaKey = "/tEXt/Scc"
-        let WriteMeta_ (path : string, num : int, from : int, hash : string) =
-            let data = sprintf "%d %d %s" num from hash
-            use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
-            let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None)
-            let frm = dec.Frames.[0]
-            let wr = frm.CreateInPlaceBitmapMetadataWriter ()
-            let mutable res = false
-            if wr.TrySave () then
-                wr.SetQuery (MetaKey, data.ToCharArray()) // Steclo collection
-                res <- true
-            stm.Close ()
-            res
+        let MetaKey = "/tEXt/Scc" // Steclo collection
 
-        let WriteMeta (path : string, num : int, from : int, hash : string) =
+        let WriteMeta (path : string, data : MetaValue) =
             let fip = new FileInfo (path)
-            let data = sprintf "%d %d %s" num from hash
+            let data = sprintf "%d %d %O" data.Num data.From data.Hash // %O calls ToString
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
             let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
             let frm = dec.Frames.[0]
@@ -75,7 +74,7 @@ module Functions =
                 stm'.Close ()
                 true
 
-        let ReadMeta (path : string) =
+        let ReadRawMeta (path : string) =
             use stm = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
             let dec = new PngBitmapDecoder (stm, BitmapCreateOptions.None, BitmapCacheOption.Default)
             let met = dec.Frames.[0].Metadata :?> BitmapMetadata
@@ -88,5 +87,18 @@ module Functions =
                     | obj -> Some <| obj.ToString ()
                 stm.Close ()
                 res
+
+        let ReadMeta (path : string) =
+            try
+                match ReadRawMeta (path) with
+                | None -> None
+                | Some str ->
+                    match str.Split ' ' with
+                    | [|num; from; hash|] ->
+                        match Functions.ParseHash hash with
+                        | Some hash -> Some { Num=int num; From=int from; Hash=hash }
+                        | _ -> None
+                    | _ -> None
+            with _ -> raise CorruptedMetaData
 
     end
